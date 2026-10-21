@@ -119,8 +119,8 @@ FastAPI 0.141.1, Uvicorn 0.53.0, SQLAlchemy 2.0.54, psycopg[binary] 3.3.5, Alemb
 ### Set up a fresh clone
 
 ```powershell
-git clone https://github.com/tufail-sandarwale/test-app.git
-cd test-app
+git clone https://github.com/tufail-sandarwale/test-mock-app.git
+cd test-mock-app
 npm --prefix mobile ci
 
 # Optional backend
@@ -196,7 +196,7 @@ Open **Mock GPS Tester** on the device. Approve USB debugging on the phone if pr
 
 ### Standalone test APK (no Expo or Metro)
 
-**Download for phone testing:** [releases/mock-gps-tester-test-arm64.apk](https://github.com/tufail-sandarwale/test-app/raw/main/releases/mock-gps-tester-test-arm64.apk) (about 37 MB, 64-bit ARM phones, Android 7.0+). Open the link on the phone, allow installation from your browser or file manager if prompted, then open **Mock GPS Tester**. It is development-signed for testing only; uninstall it before installing a build signed with a different key.
+**Download for phone testing:** [releases/mock-gps-tester-test-arm64.apk](https://github.com/tufail-sandarwale/test-mock-app/raw/main/releases/mock-gps-tester-test-arm64.apk) (about 37 MB, 64-bit ARM phones, Android 7.0+). Open the link on the phone, allow installation from your browser or file manager if prompted, then open **Mock GPS Tester**. It is development-signed for testing only; uninstall it before installing a build signed with a different key.
 
 Build `:app:assembleStandalone` using the same Gradle command and approved-mirror flags documented below. This variant bundles JavaScript, Hermes and assets, uses release dependencies with developer support disabled, and is signed with the development key. Production release signing is unchanged. This is for private testing only, not store distribution.
 
