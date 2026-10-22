@@ -415,11 +415,35 @@ export function EmulatorScreen({ navigation, route }: Props) {
     }
   }, []);
 
+  // Android only applies a mock location once this app is the selected mock
+  // app, so guide the user there instead of failing with a cryptic error.
+  const ensureSetupOrGuide = () => {
+    if (nativeLocation && setup && !isReady(setup)) {
+      setupActions.refresh();
+      Alert.alert(
+        'One-time setup needed',
+        'To place this location on your phone, Android needs you to choose Mock GPS Tester as the mock location app in Developer options. Android requires this and it cannot be skipped. Open the step-by-step setup now?',
+        [
+          { text: 'Not now', style: 'cancel' },
+          {
+            text: 'Open setup',
+            onPress: () => navigation.navigate('DeveloperSetup'),
+          },
+        ],
+      );
+      return false;
+    }
+    return true;
+  };
+
   const startOrStop = () => {
     dismissSearch();
     if (active) {
       setFollow(false);
       simulationActions.stop();
+      return;
+    }
+    if (!ensureSetupOrGuide()) {
       return;
     }
     if (mode === 'route') {
@@ -603,6 +627,9 @@ export function EmulatorScreen({ navigation, route }: Props) {
               setFollow(false);
               simulationActions.moveHere(pressed);
             } else {
+              if (!ensureSetupOrGuide()) {
+                return;
+              }
               const joystick = mode === 'joystick';
               setFollow(joystick);
               setMode(current => (current === 'route' ? 'point' : current));

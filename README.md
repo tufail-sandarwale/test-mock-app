@@ -30,7 +30,7 @@ Android GPS testing application using React Native, TypeScript, native Kotlin, a
 | --- | --- |
 | `npm run typecheck` | Pass |
 | `npm run lint` | Pass, no warnings |
-| `npm test -- --runInBand` | Pass, 75 tests in 8 suites: emulator map (play/stop, move here, route drawing, joystick steering, search and search races, favorites, map styles, long-press, setup banners, map safe mode, malformed map events), diagnostics (error screen, global error capture, crash report notice, startup timeout), navigation, joystick math/throttle, geocoding, geometry, persistence/history, native contract, status races, cloud |
+| `npm test -- --runInBand` | Pass, 76 tests in 8 suites: emulator map (play/stop, move here, route drawing, joystick steering, search and search races, favorites, map styles, long-press, setup banners and guided setup, map safe mode, malformed map events), diagnostics (error screen, global error capture, crash report notice, startup timeout), navigation, joystick math/throttle, geocoding, geometry, persistence/history, native contract, status races, cloud |
 | Gradle wrapper `--version` | Pass, Gradle 9.4.1 downloaded using Windows certificate trust |
 | React Native Gradle plugins | Compiled using the approved Maven mirror |
 | SDK tools, Platform 37.0, Build Tools 37.0.0, CMake 3.22.1 | Installed and verified |
@@ -49,7 +49,9 @@ Android GPS testing application using React Native, TypeScript, native Kotlin, a
 
 ## Supported mock locations only
 
-Android's supported mock-location configuration is required. Enable Developer Options and select **Mock GPS Tester** under **Select mock location app**. Enable device Location and grant precise location permission. Allow notifications so foreground controls are visible.
+Android's supported mock-location configuration is **required and cannot be bypassed**. Android only lets an app set a location after you choose it under **Select mock location app**, so you must enable Developer Options and select **Mock GPS Tester** there. This is how every "GPS emulator" app works; there is no in-app switch that skips it. Also enable device Location and grant precise location permission, and allow notifications so the foreground controls are visible.
+
+When you press play before this is done, the app shows a **One-time setup needed** dialog with an **Open setup** button that takes you straight to the guided Device Setup, rather than silently failing to apply the location.
 
 Open **Device Setup** from the side menu (or the map's setup banner) for a live checklist of Developer Options, mock location app, precise location, Location services, and notifications. Each item shows its status and a button that opens the matching Android Settings screen; the status refreshes when you return to the app. Android does not allow apps to turn Developer Options on or off, so the user always flips the switch: to enable, tap **Build number** 7 times in About phone; to disable, turn off the switch at the top of Developer Options (blocked in-app while a simulation is active). Some manufacturers' Settings screens differ; if a screen is unavailable, general Settings opens instead.
 
@@ -202,7 +204,7 @@ Build `:app:assembleStandalone` using the same Gradle command and approved-mirro
 
 Verified on 2026-09-19: standalone build passes, APK v2 signature verifies, bundled JavaScript and Hermes are present for arm64-v8a, armeabi-v7a, x86 and x86_64. Version `1.0-test`, minimum SDK 24, size approximately 114 MB. The custom variant explicitly disables cleartext traffic.
 
-Rebuilt on 2026-10-21 for the GPS emulator redesign with `-PreactNativeArchitectures=arm64-v8a :app:assembleStandalone`, using JDK 17 (React Native's recommended version) from the Gradle toolchain cache at `%USERPROFILE%\.gradle\jdks`. The machine's default Java is now 27, which was not tested with this build. Rebuilt again on 2026-10-22 after a tester reported a blank white screen, adding the self-diagnosis features listed above and rendering the map with a TextureView. The arm64 APK is 37.2 MB, its v2 signature verifies with the development key, and the bundle and native code contain the new UI, crash recorder and map safe mode. The downloadable `releases/` APK is this build (SHA-256 `CBEA093EEFD8B4868159258F068700A9C629BB5D5F5290B324FB2DFBC861E8A2`).
+Rebuilt on 2026-10-21 for the GPS emulator redesign with `-PreactNativeArchitectures=arm64-v8a :app:assembleStandalone`, using JDK 17 (React Native's recommended version) from the Gradle toolchain cache at `%USERPROFILE%\.gradle\jdks`. The machine's default Java is now 27, which was not tested with this build. Rebuilt again on 2026-10-22 after a tester reported a blank white screen, adding the self-diagnosis features listed above and rendering the map with a TextureView, and once more to add the guided mock-app setup prompt. The arm64 APK is 37.2 MB, its v2 signature verifies with the development key, and the bundle and native code contain the new UI, crash recorder and map safe mode. The downloadable `releases/` APK is this build (SHA-256 `B2DF0EC63D6946D51D51C5BD3060254E29B4185452E43C0379E03D5D0038C81F`).
 
 Output: `mobile/android/app/build/outputs/apk/standalone/app-standalone.apk`. Transfer this APK to an Android 7.0+ phone, open it in the phone's file manager, and allow installation from that source if Android asks. Open **Mock GPS Tester** directly; no Expo, Metro, USB debugging or backend is required. Fresh map tiles still need internet. Optional cloud access requires an HTTPS server in this variant.
 

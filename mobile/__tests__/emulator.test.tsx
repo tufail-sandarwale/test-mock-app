@@ -464,3 +464,27 @@ test('ornament positions are whole numbers for the native Int32 props', async ()
   expect(Number.isInteger(props.attributionPosition.bottom)).toBe(true);
   expect(Number.isInteger(props.compassPosition.top)).toBe(true);
 });
+
+test('starting without mock-app setup guides to device setup instead of failing', async () => {
+  const { Alert } = require('react-native');
+  await act(async () => app.unmount());
+  native.getPrerequisites.mockResolvedValue({
+    ...ready,
+    mockAppSelected: false,
+  });
+  const alert = jest.spyOn(Alert, 'alert').mockImplementation(() => {});
+  try {
+    await renderApp();
+    await tap('Start mocking');
+    expect(native.start).not.toHaveBeenCalled();
+    expect(alert).toHaveBeenCalledTimes(1);
+    const actions = alert.mock.calls[0][2] as {
+      text: string;
+      onPress?: () => void;
+    }[];
+    await act(async () => actions[1].onPress?.());
+    expect(app.root.findAllByType(DeveloperSetupScreen)).toHaveLength(1);
+  } finally {
+    alert.mockRestore();
+  }
+});
